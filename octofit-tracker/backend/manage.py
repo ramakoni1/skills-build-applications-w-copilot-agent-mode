@@ -17,6 +17,17 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
+    # If running the development server, check for port conflicts
+    if len(sys.argv) > 1 and sys.argv[1] == 'runserver':
+        import socket
+        port = sys.argv[2] if len(sys.argv) > 2 else '8000'
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.bind(('127.0.0.1', int(port)))
+        except OSError:
+            print(f"Port {port} is already in use. Please specify a different port using 'python manage.py runserver <port>'.")
+            sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
